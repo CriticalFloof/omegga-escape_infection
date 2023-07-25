@@ -20,7 +20,7 @@ remove it entirely if it is unnecessary.
 
 ## Install
 
-`omegga install gh:Critical Floof/Escape_Infection_Runtime`
+`omegga install gh:Critical Floof/escape_infection`
 
 _TODO: more steps...?_
 
