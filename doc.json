@@ -1,0 +1,38 @@
+{
+  "name": "Escape_Infection",
+  "description": "A plugin which runs the Escape Infection game-mode and tooling.",
+  "author": "Critical Floof",
+  "config": {
+    "Restricted Role": {
+      "description": "Restricts players with this role from using some commands that can be spammed. Example: /msg",
+      "type": "role",
+      "default": "Admin"
+    },
+    "Trusted Role": {
+      "description": "Allows players with this role to utilize commands with elevated permissions.",
+      "type": "role",
+      "default": "Admin"
+    },
+    "Developer Role": {
+      "description": "Same as Trusted role but with the addition of potentially dangerous commands, which is locked behind the safety command /dev_enable",
+      "type": "role",
+      "default": "Admin"
+    },
+    "Map Time Length": {
+      "description": "The time a map has (in minutes) before a vote is called to switch the map",
+      "type": "number",
+      "default": 30
+    },
+    "Autosave Interval": {
+      "description": "The time it takes (in minutes) every autosave occurs",
+      "type": "number",
+      "default": 15
+    },
+    "Verbose Logging": {
+      "description": "Extra console logging for debug purposes.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "commands": []
+}
