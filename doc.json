@@ -68,6 +68,11 @@
             "name": "/force_rtv",
             "description": "Same as rtv, but you don't need other people to rock the vote",
             "example": "/force_rtv"
+        },
+        {
+            "name": "/map_time",
+            "description": "Displays the time until the map vote occurs",
+            "example": "/map_time"
         }
     ]
 }

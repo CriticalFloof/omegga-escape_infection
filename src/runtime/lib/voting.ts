@@ -5,9 +5,7 @@ export class VotingHandler {
     private static currentVotingChoices: string[] = [];
     private static votes: string[][] = [];
 
-    private static endVotePromise: (
-        value: string[] | PromiseLike<string[]>
-    ) => void = null;
+    private static endVotePromise: (value: string[] | PromiseLike<string[]>) => void = null;
 
     public static getVotingChoices(): string[] {
         return this.currentVotingChoices;
@@ -24,33 +22,29 @@ export class VotingHandler {
 
     public static castVote(id: string, choice: number): Promise<void> {
         return new Promise((res, rej) => {
-            if (this.currentVotingChoices.length === 0) {
+            if (VotingHandler.currentVotingChoices.length === 0) {
                 let err = new Error("vote_not_active");
                 rej(err);
             }
 
-            if (choice >= this.currentVotingChoices.length || choice < 0) {
+            if (choice >= VotingHandler.currentVotingChoices.length || choice < 0) {
                 let err = new Error("out_of_range");
                 rej(err);
             }
 
-            for (let i = 0; i < this.votes.length; i++) {
-                let category = this.votes[i];
-                category = category.filter((val) => {
+            for (let i = 0; i < VotingHandler.votes.length; i++) {
+                VotingHandler.votes[i] = VotingHandler.votes[i].filter((val) => {
                     return val !== id;
                 });
             }
 
-            this.votes[choice].push(id);
+            VotingHandler.votes[choice].push(id);
 
             res();
         });
     }
 
-    public static async initiateVote(
-        choices: string[],
-        ms: number
-    ): Promise<string[]> {
+    public static async initiateVote(choices: string[], ms: number): Promise<string[]> {
         let votePromise: Promise<string[]> = new Promise(async (res, rej) => {
             this.endVotePromise = res;
 
@@ -65,11 +59,7 @@ export class VotingHandler {
 
             for (let i = 0; i < choices.length; i++) {
                 const choice = choices[i];
-                PrettyChat.broadcast(
-                    `${PrettyChat.cmd("/Vote")} <color="${ColorsHex.green}">${
-                        i + 1
-                    }</> <color="${ColorsHex.black}">|</> ${choice}`
-                );
+                PrettyChat.broadcast(`${PrettyChat.cmd("/Vote")} <color="${ColorsHex.green}">${i + 1}</> <color="${ColorsHex.black}">|</> ${choice}`);
             }
 
             setTimeout(() => {
@@ -83,19 +73,16 @@ export class VotingHandler {
     public static endVote(overrule?: number): Promise<void> {
         return new Promise(async (res, rej) => {
             if (overrule != null) {
-                this.votes = Array.from(
-                    { length: this.currentVotingChoices.length },
-                    () => {
-                        return [];
-                    }
-                );
-                await this.castVote(".", overrule - 1).catch((err) => {
+                VotingHandler.votes = Array.from({ length: this.currentVotingChoices.length }, () => {
+                    return [];
+                });
+                await VotingHandler.castVote(".", overrule - 1).catch((err) => {
                     rej(err);
                 });
             }
 
-            this.endVotePromise(this.getVoteResults());
-            this.endVotePromise = null;
+            VotingHandler.endVotePromise(this.getVoteResults());
+            VotingHandler.endVotePromise = null;
 
             res();
         });
