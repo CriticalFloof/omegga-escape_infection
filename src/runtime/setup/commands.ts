@@ -8,7 +8,7 @@ export class CommandInitalizatior {
     public static run() {
         new Command("vote", TrustLevel.Restricted, (speaker: string, voteNumberStr: string) => {
             if (VotingHandler.getVotingChoices().length === 0) {
-                PrettyChat.whisper(speaker, `Pick a number between 1 and ${VotingHandler.getVotingChoices().length}.`);
+                PrettyChat.whisper(speaker, `There is no ongoing vote.`);
                 return;
             }
 
@@ -63,32 +63,32 @@ export class CommandInitalizatior {
 
         new Command("force_vote", TrustLevel.Trusted, (speaker: string, voteNumberStr: string) => {
             if (VotingHandler.getVotingChoices().length === 0) {
-                PrettyChat.whisper(speaker, `Pick a number between 1 and ${VotingHandler.getVotingChoices().length}.`);
+                PrettyChat.whisper(speaker, `There is no ongoing vote.`);
                 return;
             }
 
             if (!voteNumberStr) {
-                PrettyChat.whisper(speaker, `Please provide a number.`);
-                return;
-            }
-
-            const voteNumber = parseInt(voteNumberStr);
-            if (!Number.isInteger(voteNumber)) {
-                PrettyChat.whisper(speaker, `${voteNumber} is not a number.`);
-                return;
-            }
-
-            VotingHandler.endVote(voteNumber)
-                .then(() => {
-                    PrettyChat.broadcast(`${speaker} forced option ${voteNumber}.`);
-                })
-                .catch((err: Error) => {
-                    console.log("test");
-                    if (err.message === "out_of_range") {
-                        PrettyChat.whisper(speaker, `Pick a number between 1 and ${VotingHandler.getVotingChoices().length}.`);
-                        return;
-                    }
+                VotingHandler.endVote().then(() => {
+                    PrettyChat.broadcast(`${speaker} forced the vote to end.`);
                 });
+            } else {
+                const voteNumber = parseInt(voteNumberStr);
+                if (!Number.isInteger(voteNumber)) {
+                    PrettyChat.whisper(speaker, `${voteNumber} is not a number.`);
+                    return;
+                }
+
+                VotingHandler.endVote(voteNumber)
+                    .then(() => {
+                        PrettyChat.broadcast(`${speaker} forced option ${voteNumber}.`);
+                    })
+                    .catch((err: Error) => {
+                        if (err.message === "out_of_range") {
+                            PrettyChat.whisper(speaker, `Pick a number between 1 and ${VotingHandler.getVotingChoices().length}.`);
+                            return;
+                        }
+                    });
+            }
         });
 
         new Command("force_rtv", TrustLevel.Trusted, (speaker: string) => {
