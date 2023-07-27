@@ -1,3 +1,4 @@
+import { EditMode } from "src/runtime/lib/edit_mode";
 import { Command, TrustLevel } from "../../lib/commands";
 import { PrettyChat } from "../../lib/prettytext";
 import { VotingHandler } from "../../lib/voting";
@@ -32,6 +33,10 @@ new Command("force_vote", TrustLevel.Trusted, (speaker: string, voteNumberStr: s
 });
 
 new Command("force_rtv", TrustLevel.Trusted, (speaker: string) => {
+    if (!MapRotator.isEnabled()) {
+        PrettyChat.whisper(speaker, `Map rotator is disabled`);
+        return;
+    }
     if (VotingHandler.getVotingChoices().length !== 0) {
         PrettyChat.whisper(speaker, `There is an ongoing vote.`);
         return;

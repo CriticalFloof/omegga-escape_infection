@@ -24,38 +24,50 @@ export class MapRotator {
         },
     };
 
+    private static isVoting: boolean = false;
     private static intervalId: NodeJS.Timer = null;
     private static timeoutId: NodeJS.Timeout = null;
-    private static voteId: NodeJS.Timeout = null;
     private static currentMinigameRuleset: string = "";
+    private static enabled: boolean = false;
 
     public static start() {
         this.stop();
+        this.enabled = true;
         this.initateMapChangeVote(false);
         Runtime.omegga.on("join", this.rtv.neededCallback);
         Runtime.omegga.on("leave", this.rtv.neededCallback);
     }
 
     public static stop() {
+        this.enabled = false;
+
+        if (this.isVoting) {
+            VotingHandler.endVote();
+        }
+
         Runtime.omegga.off("join", this.rtv.neededCallback);
         Runtime.omegga.off("leave", this.rtv.neededCallback);
 
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
-        clearTimeout(this.voteId);
-        this.voteId = null;
         clearInterval(this.intervalId);
         this.intervalId = null;
 
-        MapLoader.stop();
+        MapLoader.clear();
         this.currentMinigameRuleset = "";
         this.currentMap = "";
     }
 
     public static initateMapChangeVote(include_extend: boolean = true) {
         function recursiveVote(choices) {
+            MapRotator.isVoting = true;
             VotingHandler.initiateVote(choices, 15000)
                 .then((winners) => {
+                    MapRotator.isVoting = false;
+                    if (!MapRotator.enabled) {
+                        return;
+                    }
+
                     // Nobody votes
                     if (winners.length === 0) {
                         PrettyChat.broadcast(`No maps were voted for. Choosing random...`);
@@ -85,9 +97,13 @@ export class MapRotator {
                 })
                 .catch((err) => {
                     if (err.message == "vote_is_active") {
-                        console.log("Failed to create vote.");
+                        Log.verb("Failed to create vote.");
                     }
                 });
+        }
+
+        if (!this.enabled) {
+            return;
         }
 
         WorldEventListener.off("minigame_round_change", this.roundChangeListenerFunction);
@@ -118,6 +134,10 @@ export class MapRotator {
         recursiveVote(chosenMaps);
     }
 
+    public static isEnabled() {
+        return this.enabled;
+    }
+
     public static getRtv() {
         return this.rtv;
     }
@@ -131,9 +151,6 @@ export class MapRotator {
         for (let i = 0; i < minigameKeys.length; i++) {
             const ruleset = minigameKeys[i];
 
-            console.log("object", MapRotator.currentMinigameRuleset);
-            console.log("emit", ruleset);
-
             if (MapRotator.currentMinigameRuleset === ruleset) {
                 MapRotator.initateMapChangeVote();
             }
@@ -141,6 +158,9 @@ export class MapRotator {
     }
 
     private static activateMapTimer(time: number) {
+        if (!this.enabled) {
+            return;
+        }
         this.mapSwitchTime += time * 60000;
 
         clearTimeout(this.timeoutId);
@@ -164,6 +184,9 @@ export class MapRotator {
     }
 
     private static switchMap(mapName: string) {
+        if (!this.enabled) {
+            return;
+        }
         if (mapName === "extend_map") {
             this.activateMapTimer(Runtime.config["Map Time Length"]);
             PrettyChat.broadcast(`Extending map time for another ${Runtime.config["Map Time Length"]} minutes.`);
@@ -171,7 +194,7 @@ export class MapRotator {
         }
 
         PrettyChat.broadcast(`Switching map to: "${mapName}"`);
-        MapLoader.startSafe(mapName).then((minigame) => {
+        MapLoader.safeLoadCompiled(mapName).then((minigame) => {
             if (minigame == undefined || minigame.ruleset == undefined) {
                 // If this ever happens, the map rotator is now broken.
                 // A fix would be to get all minigames and somehow identify the correct one.
@@ -181,7 +204,6 @@ export class MapRotator {
                 return;
             }
             this.currentMinigameRuleset = minigame.ruleset;
-            console.log(this.currentMinigameRuleset);
         });
 
         this.currentMap = mapName;

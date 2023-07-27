@@ -1,4 +1,3 @@
-import { Runtime } from "../core";
 import { ColorsHex, PrettyChat } from "./prettytext";
 
 export class VotingHandler {
@@ -25,11 +24,13 @@ export class VotingHandler {
             if (VotingHandler.currentVotingChoices.length === 0) {
                 let err = new Error("vote_not_active");
                 rej(err);
+                return;
             }
 
             if (choice >= VotingHandler.currentVotingChoices.length || choice < 0) {
                 let err = new Error("out_of_range");
                 rej(err);
+                return;
             }
 
             for (let i = 0; i < VotingHandler.votes.length; i++) {
@@ -50,6 +51,7 @@ export class VotingHandler {
 
             if (this.currentVotingChoices.length !== 0) {
                 rej(new Error("vote_is_active"));
+                return;
             }
 
             this.currentVotingChoices = choices;
@@ -78,6 +80,7 @@ export class VotingHandler {
                 });
                 await VotingHandler.castVote(".", overrule - 1).catch((err) => {
                     rej(err);
+                    return;
                 });
             }
 

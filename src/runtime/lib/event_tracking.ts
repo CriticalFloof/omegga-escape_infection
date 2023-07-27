@@ -5,7 +5,6 @@ export class WorldEventListener {
         if (this.subscribers[event] == undefined) this.subscribers[event] = [];
 
         this.subscribers[event].push(listener);
-        console.log(this.subscribers[event]);
     }
 
     public static off(event: string, listener: (...data: any[]) => void) {
@@ -14,8 +13,6 @@ export class WorldEventListener {
         this.subscribers[event] = this.subscribers[event].filter((val) => {
             return val != listener;
         });
-
-        console.log(this.subscribers[event]);
 
         if (this.subscribers[event].length === 0) delete this.subscribers[event];
     }

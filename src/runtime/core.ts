@@ -8,6 +8,7 @@ import { CommandInitalizatior } from "./setup/commands/index";
 import { PresetHandler } from "./lib/presets";
 import { MapLoader } from "./lib/map/loader";
 import { MapRotator } from "./setup/map_rotator";
+import { EditMode } from "./lib/edit_mode";
 
 export class Runtime {
     static omegga: OmeggaLike;
@@ -29,12 +30,16 @@ export class Runtime {
         WorldEventBaseSignalsInitalizatior.run();
         CommandInitalizatior.run();
 
-        MapRotator.start();
+        if (this.config["Edit Mode"]) {
+            EditMode.setEnabled(true);
+        } else {
+            MapRotator.start();
+        }
 
         return { registeredCommands: Command.getList() };
     }
 
     static stop() {
-        MapLoader.stop();
+        MapLoader.clear();
     }
 }

@@ -5,7 +5,6 @@ import { MapRotator } from "../map_rotator";
 
 new Command("map_time", TrustLevel.Restricted, (speaker: string) => {
     let timeLeft = new Date(MapRotator.mapSwitchTime - Date.now());
-    console.log(timeLeft.getTime());
     if (timeLeft.getTime() > 86400000) {
         // One day in miliseconds
         PrettyChat.whisper(`The map is NOT switching anytime soon buddy.`);
@@ -56,6 +55,10 @@ new Command("vote", TrustLevel.Restricted, (speaker: string, voteNumberStr: stri
 });
 
 new Command("rtv", TrustLevel.Restricted, (speaker: string) => {
+    if (!MapRotator.isEnabled()) {
+        PrettyChat.whisper(speaker, `Map rotator is disabled`);
+        return;
+    }
     if (VotingHandler.getVotingChoices().length !== 0) {
         PrettyChat.whisper(speaker, `There is an ongoing vote.`);
         return;

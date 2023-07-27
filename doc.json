@@ -32,6 +32,11 @@
             "description": "Extra console logging for debug purposes.",
             "type": "boolean",
             "default": false
+        },
+        "Edit Mode": {
+            "description": "Whenever the plugin starts, automatically enable edit mode.",
+            "type": "boolean",
+            "default": false
         }
     },
     "commands": [
@@ -61,18 +66,35 @@
         },
         {
             "name": "/rtv",
-            "description": "Allows you to rock the vote, if enough people also rock the vote, then a forced map change vote will start",
+            "description": "Allows you to rock the vote, if enough people also rock the vote, then a forced map change vote will start.",
             "example": "/rtv"
         },
         {
             "name": "/force_rtv",
-            "description": "Same as rtv, but you don't need other people to rock the vote",
+            "description": "Same as rtv, but you don't need other people to rock the vote.",
             "example": "/force_rtv"
         },
         {
             "name": "/map_time",
-            "description": "Displays the time until the map vote occurs",
+            "description": "Displays the time until the map vote occurs.",
             "example": "/map_time"
+        },
+        {
+            "name": "/enable_edit_mode",
+            "description": "Enables/Disables edit mode.",
+            "example": "/enable_edit_mode"
+        },
+        {
+            "name": "/load_map",
+            "description": "Loads a source build and it's environment without running the gamemode.",
+            "example": "/load_map escape_prototype",
+            "args": [
+                {
+                    "name": "map",
+                    "description": "The name of the map which is to be loaded",
+                    "required": true
+                }
+            ]
         }
     ]
 }
