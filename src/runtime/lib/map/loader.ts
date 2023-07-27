@@ -5,7 +5,7 @@ import { Gamemode } from "./minigame";
 export class MapLoader {
     public static async start(mapName: string): Promise<ILogMinigame> {
         const mapLoadPath = `Escape_Infection/Compiled/${mapName}`;
-        Runtime.omegga.loadBricks(mapLoadPath, { quiet: false });
+        Runtime.omegga.loadBricks(mapLoadPath, { quiet: true });
 
         const environmentName = `EI_${mapName}_environment`;
         Runtime.omegga.loadEnvironment(environmentName);
