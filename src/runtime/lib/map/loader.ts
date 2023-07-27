@@ -4,7 +4,7 @@ import { Gamemode } from "./minigame";
 
 export class MapLoader {
     public static clear() {
-        Runtime.omegga.clearAllBricks();
+        Runtime.omegga.clearAllBricks(true);
         Runtime.omegga.resetEnvironment();
         Gamemode.stop();
     }
