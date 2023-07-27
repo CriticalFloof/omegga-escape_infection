@@ -4,11 +4,10 @@ import { AutoStorage, EmptyLiveStore, Storage } from "./lib/store";
 import { Command } from "./lib/commands";
 import { UserInitalizatior } from "./setup/init_user";
 import { WorldEventBaseSignalsInitalizatior } from "./setup/worldevents";
-import { CommandInitalizatior } from "./setup/commands";
+import { CommandInitalizatior } from "./setup/commands/index";
 import { PresetHandler } from "./lib/presets";
 import { MapLoader } from "./lib/map/loader";
 import { MapRotator } from "./setup/map_rotator";
-import { WorldEventListener } from "./lib/event_tracking";
 
 export class Runtime {
     static omegga: OmeggaLike;
