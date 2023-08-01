@@ -3,6 +3,38 @@ import { PrettyChat } from "../../lib/prettytext";
 import { VotingHandler } from "../../lib/voting";
 import { MapRotator } from "../map_rotator";
 
+const yesAliases = ["yes", "y"];
+for (let i = 0; i < yesAliases.length; i++) {
+    const yesName = yesAliases[i];
+    new Command(yesName, TrustLevel.Restricted, (speaker: string) => {
+        if (!Command.hasPendingDefer(speaker)) {
+            PrettyChat.whisper(speaker, "You don't have any commands to respond to.");
+            return;
+        }
+        Command.resolveDefer(speaker);
+    });
+}
+
+const noAliases = ["no", "n"];
+for (let i = 0; i < noAliases.length; i++) {
+    const noName = noAliases[i];
+    new Command(noName, TrustLevel.Restricted, (speaker: string) => {
+        if (!Command.hasPendingDefer(speaker)) {
+            PrettyChat.whisper(speaker, "You don't have any commands to respond to.");
+            return;
+        }
+        Command.rejectDefer(speaker);
+    });
+}
+
+new Command("respond", TrustLevel.Restricted, (speaker: string, ...responce: string[]) => {
+    if (!Command.hasPendingDefer(speaker)) {
+        PrettyChat.whisper(speaker, "You don't have any commands to respond to.");
+        return;
+    }
+    Command.resolveDefer(speaker, responce);
+});
+
 new Command("map_time", TrustLevel.Restricted, (speaker: string) => {
     let timeLeft = new Date(MapRotator.mapSwitchTime - Date.now());
     if (timeLeft.getTime() > 86400000) {

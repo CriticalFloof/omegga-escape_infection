@@ -44,6 +44,7 @@ export class PresetHandler {
         // Environments and Minigame presets are set with a prefix "EI_" to differentiate them from other presets.
 
         let unavailibleFiles = [];
+
         minigameQueries.forEach((fileName) => {
             if (!fs.existsSync(`${brMinigamePath}/EI_${fileName}.bp`)) {
                 unavailibleFiles.push({
@@ -134,7 +135,7 @@ export class PresetHandler {
         return readyMaps;
     }
 
-    public static getEditableMaps() {
+    public static getEditableMaps(): string[] {
         const brPresetPath = Runtime.omegga.presetPath;
         const brSavePath = Runtime.omegga.savePath;
         const brBuildSourcePath = `${brSavePath}/Escape_Infection/Source`;
@@ -150,5 +151,11 @@ export class PresetHandler {
             readyMaps.push(mapName);
         }
         return readyMaps;
+    }
+
+    public static getGamemodes(): string[] {
+        const pluginPath = `${path.dirname(path.dirname(__filename))}`;
+        const pluginGamemodePath = `${pluginPath}/data/gamemodes`;
+        return fs.readdirSync(pluginGamemodePath);
     }
 }
